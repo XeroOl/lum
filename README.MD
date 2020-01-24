@@ -2,6 +2,10 @@
 Lum is a custom programming language made by me that compiles to lua.
 It has two parts to it, a lua library, `lum.lua`, and a compiler, `lumc`.
 
+I created lum because I had complaints about lua, namely a lack of `+=`, `-=`, and keywords making code long, like `end` and `function`.
+Lum uses `{}` curly braces for blocks of code, and requires semicolons on each line.
+
+
 To install, put `lum.lua` somewhere in your lua path, and put `lumc` somewhere in your executable path.
 
 See [example.lum](./example.lum) for example lum code.
