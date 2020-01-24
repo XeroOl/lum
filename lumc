@@ -1,0 +1,96 @@
+#!/usr/bin/env luajit
+local lum = require "lum"
+
+local function version()
+	print("lumc " .. lum.version)
+end
+
+local function help()
+	version()
+	print"Usage:"
+	print"lumc [FLAGS] <input>"
+	print"   flags:"
+	print"    -h  --help                show this output"
+	print"    -o  --output <filename>   specifies target output file"
+	print"    -r  --run                 immediately runs generated code"
+	print"        --version             prints the version of the game"
+	print"        --                    pass args to code generated with --run"
+end
+
+local function quit(message)
+	print(message)
+	help()
+	os.exit()
+end
+
+local function read(filename)
+	local f = io.open(filename, "r")
+	local str = f:read("*a")
+	f:close()
+	return str
+end
+
+local function write(str, filename)
+	local f = io.open(filename, "w")
+	f:write(str)
+	f:close()
+end
+
+local function main()
+	local i = 1
+	local input
+	local output
+	local run = false
+	local print_code = true
+	local pass_args
+	while arg[i] do
+		if arg[i] == '--help' or arg[i] == '-h' then
+			return help()
+		elseif arg[i] == '--output' or arg[i] == '-o' then
+			i = i + 1
+			output = arg[i] or quit("expected filename after flag `" .. arg[i] .. "`")
+			print_code = false
+		elseif arg[i] == '--run' or arg[i] == '-r' then
+			run = true
+			print_code = false
+		elseif arg[i] == '--version' then
+			return version()
+		elseif arg[i] == '--' then
+			pass_args = {}
+			i = i + 1
+			local j = 1
+			while arg[i] do
+				pass_args[j] = arg[i]
+				i = i + 1
+				j = j + 1
+			end
+		elseif arg[i]:sub(1, 1) == '-' then
+			quit("unknown flag " .. arg[i])
+		else
+			input = arg[i]
+		end
+		i = i + 1
+	end 
+	if not input then
+		quit "no file specified"
+	end
+	
+	local input_code = read(input)
+	
+	local output_code = lum.to_lua(input_code)
+	
+	if output then
+		write(output_code, output)
+	end
+	
+	if run then
+		_G.arg = pass_args or {}
+		(load or loadstring)(output_code)()
+	end
+	
+	if print_code then
+		print(output_code)
+	end
+end
+
+main()

@@ -1,0 +1,138 @@
+// this is the example / test bench for the language Lum
+// which is basically a C syntax theme for lua
+
+// variables
+let x = 10;
+
+// batch assignment with lua semantics
+let a, b = 1, 2;
+
+// local variable declaration
+let x;
+
+// function calls
+print(a, b);
+
+// local function definitions
+fn add(x, y) {
+	return x + y;
+}
+
+// lua tables
+let my_table = {
+	child = {age = 5};
+};
+
+// global variables are just variables that aren't declared locally
+my_global = 10;
+
+// functions have to be explicitly marked public to be global
+pub fn my_global_function() {
+	print("I can be seen globally");
+}
+
+// lua syntax sugar for method and function definitions
+fn my_table:get_child() {
+	print("I am getting a child");
+	// implicit self from lua
+	return self.child;
+}
+
+// compound operators
+let a = 5;
+a += 5;
+print(a);
+
+// unary operators
+a++;
+// unary operators are statements
+// so no x = y++; memes;
+
+// compound operators have proper semantics
+// get_child is called once
+my_table:get_child().age += 1;
+
+// for metatable people, my_table["child"] __index is only called once
+my_table.child.age += 1;
+
+let x = 5;
+let y = 4;
+
+// control flow
+// if statements
+if (x > y) {
+	// .. is concat
+	print(x .. " is greater than " .. y);
+	// elseif is one word
+} elseif (x == y) {
+	print(x .. " is equal to " .. y);
+} else {
+	print(x .. " is less than " .. y);
+}
+
+let list = {"foo", "bar", "baz"};
+// for loops
+// lua iterator loops
+for (i, v: ipairs(list)) {
+	print(i, v);
+}
+
+// lua numerical loops
+for (i = 1, 10) {
+	print(i);
+}
+
+// c-style loops
+for(let i = 0; i < 10; i++) {
+	print(i);
+}
+
+
+let x = 22;
+// &&, ||, ! replaces `and`, `or`, `not` from lua
+while (x > 10 && x % 2 == 0) {
+	x /= 2;
+}
+
+// various lambda syntax
+
+// basic lambda
+let increment = x -> x + 1;
+// equivalent to function(x) return x + 1 end
+
+// multiple args with ()
+let add = (x, y) -> x + y;
+// equivalent to function(x, y) return x + y end
+
+// multiple returns with ()
+let multi_return = x -> (x, x + 1, x + 2);
+// equivalent to function(x) return x, x + 1, x + 2 end
+
+// ...
+let concat = ... -> table.concat{...};
+
+concat("a", "b", "c"); // "abc"
+// equivalent to function(...) return table.concat {...};
+
+// code block body with {}
+let countdown = x -> {
+	while (x > 0) {
+		print(x);
+		x--;
+	}
+	return true;
+};
+
+// for the functional programmers out there
+let curry = x -> y -> z -> x * y * z;
+// let curry = x -> (y -> (z -> (x * y * z)));
+
+print(curry(1)(2)(3)); // 6
+
+
+
+// you can create literal tables
+let foo = x -> {"foo", "bar", x};
+
+// if ambiguous, use () to force it to be interpreted as an expression
+let empty_table_maker = () -> ({});
