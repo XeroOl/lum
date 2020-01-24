@@ -255,7 +255,7 @@ local compiler = Ct {
 	fieldlist = field * maybe(fieldsep * maybe(fieldlist)),
 	field = t '[' * exp * t ']' * t '=' * exp + Name * t '=' * exp + exp,
 	fieldsep = t ';' + t ',',
-	binop = t(S'+-*/%<>' + '<=' + '>=' + '==' + '..') + d '&&' * i 'and' + d '!=' * i '~=' + d '||' * i 'or',
+	binop = t(P'^' + P'<=' + '>=' + '==' + '..' + S'+-*/%<>^') + d '&&' * i 'and' + d '!=' * i '~=' + d '||' * i 'or',
 	unop = t '-' + d '!' * i 'not' + t '#',
 	call = args + t ':' * Name * args,
 	index = t '[' * exp * t ']'  + d '.' * (i '.' * Name + i '[' * t(R'09'^1) * i ']'),
@@ -278,7 +278,7 @@ end
 
 local function make_err_message(str, pos)
 	local row, col = count_lines(str, pos)
-	print('Syntax error on line ' .. row ..' at col ' .. col)
+	return 'Syntax error on line ' .. row ..' at col ' .. col
 end
 
 function lum.to_lua(str, check)
