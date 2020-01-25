@@ -63,8 +63,8 @@ let y = 4;
 if (x > y) {
 	// .. is concat
 	print(x .. " is greater than " .. y);
-	// elseif is one word
-} elseif (x == y) {
+	// elseif is two words now
+} else if (x == y) {
 	print(x .. " is equal to " .. y);
 } else {
 	print(x .. " is less than " .. y);

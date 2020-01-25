@@ -2,7 +2,7 @@ local lpeg = require "lpeglabel"
 local _G = _G
 local lum = {}
 
-lum.version = "1.0.1"
+lum.version = "2.0.0"
 
 setfenv(1, setmetatable({}, {
 	__index = function(self, k)
