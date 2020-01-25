@@ -182,28 +182,28 @@ local compiler = Ct {
 		= d 'let' * i 'local' * namelist * maybe(t '=' * explist)
 		+ varlist * t '=' * explist
 		-- TODO simplify
-		+ swap_aba(Name * maybe(index), d '+=' * i '=') * i '+' * (exp2 + i '(' * exp * i ')')
-		+ swap_aba(Name * maybe(index), d '-=' * i '=') * i '-' * (exp2 + i '(' * exp * i ')')
-		+ swap_aba(Name * maybe(index), d '*=' * i '=') * i '*' * (exp2 + i '(' * exp * i ')')
-		+ swap_aba(Name * maybe(index), d '/=' * i '=') * i '/' * (exp2 + i '(' * exp * i ')')
-		+ swap_aba(Name * maybe(index), d '%=' * i '=') * i '%' * (exp2 + i '(' * exp * i ')')
-		+ swap_aba(Name * maybe(index), d '^=' * i '=') * i '^' * (exp2 + i '(' * exp * i ')')
-		+ swap_aba(Name * maybe(index), d '||=' * i '=') * i 'or' * (exp2 + i '(' * exp * i ')')
-		+ swap_aba(Name * maybe(index), d '&&=' * i '=') * i 'and' * (exp2 + i '(' * exp * i ')')
-		+ swap_aba(Name * maybe(index), d '..=' * i '=') * i '..' * (exp2 + i '(' * exp * i ')')
+		+ swap_aba(Name * maybe(index), d '+=' * i '=') * i '+' * (exp2 * -binop + i '(' * exp * i ')')
+		+ swap_aba(Name * maybe(index), d '-=' * i '=') * i '-' * (exp2 * -binop + i '(' * exp * i ')')
+		+ swap_aba(Name * maybe(index), d '*=' * i '=') * i '*' * (exp2 * -binop + i '(' * exp * i ')')
+		+ swap_aba(Name * maybe(index), d '/=' * i '=') * i '/' * (exp2 * -binop + i '(' * exp * i ')')
+		+ swap_aba(Name * maybe(index), d '%=' * i '=') * i '%' * (exp2 * -binop + i '(' * exp * i ')')
+		+ swap_aba(Name * maybe(index), d '^=' * i '=') * i '^' * (exp2 * -binop + i '(' * exp * i ')')
+		+ swap_aba(Name * maybe(index), d '||=' * i '=') * i 'or' * (exp2 * -binop + i '(' * exp * i ')')
+		+ swap_aba(Name * maybe(index), d '&&=' * i '=') * i 'and' * (exp2 * -binop + i '(' * exp * i ')')
+		+ swap_aba(Name * maybe(index), d '..=' * i '=') * i '..' * (exp2 * -binop + i '(' * exp * i ')')
 		+ swap_aba(Name * maybe(index), d '++' * i '=') * i '+' * i '1'
 		+ swap_aba(Name * maybe(index), d '--' * i '=') * i '-' * i '1'
 		+ i 'local' * i '_' * i '=' * preindex * i ';' * (
 			-- TODO simplify
-			swap_aba(i '_' * index, d '+=' * i '=') * i '+' * (exp2 + i '(' * exp * i ')')
-			+ swap_aba(i '_' * index, d '-=' * i '=') * i '-' * (exp2 + i '(' * exp * i ')')
-			+ swap_aba(i '_' * index, d '*=' * i '=') * i '*' * (exp2 + i '(' * exp * i ')')
-			+ swap_aba(i '_' * index, d '/=' * i '=') * i '/' * (exp2 + i '(' * exp * i ')')
-			+ swap_aba(i '_' * index, d '%=' * i '=') * i '%' * (exp2 + i '(' * exp * i ')')
-			+ swap_aba(i '_' * index, d '^=' * i '=') * i '^' * (exp2 + i '(' * exp * i ')')
-			+ swap_aba(i '_' * index, d '||=' * i '=') * i 'or' * (exp2 + i '(' * exp * i ')')
-			+ swap_aba(i '_' * index, d '&&=' * i '=') * i 'and' * (exp2 + i '(' * exp * i ')')
-			+ swap_aba(i '_' * index, d '..=' * i '=') * i '..' * (exp2 + i '(' * exp * i ')')
+			swap_aba(i '_' * index, d '+=' * i '=') * i '+' * (exp2 * -binop + i '(' * exp * i ')')
+			+ swap_aba(i '_' * index, d '-=' * i '=') * i '-' * (exp2 * -binop + i '(' * exp * i ')')
+			+ swap_aba(i '_' * index, d '*=' * i '=') * i '*' * (exp2 * -binop + i '(' * exp * i ')')
+			+ swap_aba(i '_' * index, d '/=' * i '=') * i '/' * (exp2 * -binop + i '(' * exp * i ')')
+			+ swap_aba(i '_' * index, d '%=' * i '=') * i '%' * (exp2 * -binop + i '(' * exp * i ')')
+			+ swap_aba(i '_' * index, d '^=' * i '=') * i '^' * (exp2 * -binop + i '(' * exp * i ')')
+			+ swap_aba(i '_' * index, d '||=' * i '=') * i 'or' * (exp2 * -binop + i '(' * exp * i ')')
+			+ swap_aba(i '_' * index, d '&&=' * i '=') * i 'and' * (exp2 * -binop + i '(' * exp * i ')')
+			+ swap_aba(i '_' * index, d '..=' * i '=') * i '..' * (exp2 * -binop + i '(' * exp * i ')')
 			+ swap_aba(i '_' * index, d '++' * i '=') * i '+' * i '1'
 			+ swap_aba(i '_' * index, d '--' * i '=') * i '-' * i '1'
 		)
