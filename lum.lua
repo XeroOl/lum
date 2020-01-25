@@ -52,7 +52,7 @@ do
 			a[#a + 1] = b[i]
 		end
 		for i = 1, lena do
-			if a[i] ~= '\n' then
+			if a[i] ~= '\n' and a[i] ~= '\t' then
 				a[#a + 1] = a[i]
 			end
 		end
