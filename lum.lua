@@ -253,7 +253,7 @@ local compiler = Ct {
 	parlist = namelist * maybe (t ',' * t '...') + t '...',
 	tableconstructor = t '{' * maybe(fieldlist) * t '}',
 	fieldlist = field * maybe(fieldsep * maybe(fieldlist)),
-	field = t '[' * exp * t ']' * t '=' * exp + Name * t '=' * exp + exp,
+	field = t '[' * exp * t ']' * t '=' * exp + Name * t '=' * exp + d 'fn' * Name * i '=' * i 'function' * funcbody + exp,
 	fieldsep = t ';' + t ',',
 	binop = t(P'^' + P'<=' + '>=' + '==' + '..' + S'+-*/%<>^') + d '&&' * i 'and' + d '!=' * i '~=' + d '||' * i 'or',
 	unop = t '-' + d '!' * i 'not' + t '#',
