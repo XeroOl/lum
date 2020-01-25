@@ -2,7 +2,7 @@ local lpeg = require "lpeglabel"
 local _G = _G
 local lum = {}
 
-lum.version = "1.0.0"
+lum.version = "1.0.1"
 
 setfenv(1, setmetatable({}, {
 	__index = function(self, k)
@@ -163,7 +163,7 @@ local compiler = Ct {
 		+ t 'while' * d '(' * exp * d ')' * bracedblock
 		+ d 'do' * d '{' * i 'repeat' * block * d '}' * d 'while' * i 'until' * i 'not' * t '(' * exp * t ')' * t ';'
 		+ t 'if' * d '(' * exp * d ')' * d '{' * i 'then' * block
-			* maybe_some(d '}' * t 'elseif' * d '(' * exp * d ')' * d '{' * i 'then' * block)
+			* maybe_some(d '}' * d 'else' * d 'if' * i 'elseif' * d '(' * exp * d ')' * d '{' * i 'then' * block)
 			* maybe(d '}' * t 'else' * d '{' * block) * d '}' * i 'end'
 		+ t 'for' * d '(' * Name * t '=' * exp * t ',' * exp * maybe(t ',' * exp) * d ')' * bracedblock
 		+ t 'for' * d '(' * namelist * d ':' * i 'in' * explist * d ')' * bracedblock
@@ -182,35 +182,35 @@ local compiler = Ct {
 		= d 'let' * i 'local' * namelist * maybe(t '=' * explist)
 		+ varlist * t '=' * explist
 		-- TODO simplify
-		+ swap_aba(Name * maybe(index), d '+=' * i '=') * i '+' * exp
-		+ swap_aba(Name * maybe(index), d '-=' * i '=') * i '-' * exp
-		+ swap_aba(Name * maybe(index), d '*=' * i '=') * i '*' * exp
-		+ swap_aba(Name * maybe(index), d '/=' * i '=') * i '/' * exp
-		+ swap_aba(Name * maybe(index), d '%=' * i '=') * i '%' * exp
-		+ swap_aba(Name * maybe(index), d '^=' * i '=') * i '^' * exp
-		+ swap_aba(Name * maybe(index), d '||=' * i '=') * i '||' * exp
-		+ swap_aba(Name * maybe(index), d '&&=' * i '=') * i '&&' * exp
-		+ swap_aba(Name * maybe(index), d '..=' * i '=') * i '..' * exp
+		+ swap_aba(Name * maybe(index), d '+=' * i '=') * i '+' * (exp2 + i '(' * exp * i ')')
+		+ swap_aba(Name * maybe(index), d '-=' * i '=') * i '-' * (exp2 + i '(' * exp * i ')')
+		+ swap_aba(Name * maybe(index), d '*=' * i '=') * i '*' * (exp2 + i '(' * exp * i ')')
+		+ swap_aba(Name * maybe(index), d '/=' * i '=') * i '/' * (exp2 + i '(' * exp * i ')')
+		+ swap_aba(Name * maybe(index), d '%=' * i '=') * i '%' * (exp2 + i '(' * exp * i ')')
+		+ swap_aba(Name * maybe(index), d '^=' * i '=') * i '^' * (exp2 + i '(' * exp * i ')')
+		+ swap_aba(Name * maybe(index), d '||=' * i '=') * i 'or' * (exp2 + i '(' * exp * i ')')
+		+ swap_aba(Name * maybe(index), d '&&=' * i '=') * i 'and' * (exp2 + i '(' * exp * i ')')
+		+ swap_aba(Name * maybe(index), d '..=' * i '=') * i '..' * (exp2 + i '(' * exp * i ')')
 		+ swap_aba(Name * maybe(index), d '++' * i '=') * i '+' * i '1'
 		+ swap_aba(Name * maybe(index), d '--' * i '=') * i '-' * i '1'
 		+ i 'local' * i '_' * i '=' * preindex * i ';' * (
 			-- TODO simplify
-			swap_aba(i '_' * index, d '+=' * i '=') * i '+' * exp
-			+ swap_aba(i '_' * index, d '-=' * i '=') * i '-' * exp
-			+ swap_aba(i '_' * index, d '*=' * i '=') * i '*' * exp
-			+ swap_aba(i '_' * index, d '/=' * i '=') * i '/' * exp
-			+ swap_aba(i '_' * index, d '%=' * i '=') * i '%' * exp
-			+ swap_aba(i '_' * index, d '^=' * i '=') * i '^' * exp
-			+ swap_aba(i '_' * index, d '||=' * i '=') * i '||' * exp
-			+ swap_aba(i '_' * index, d '&&=' * i '=') * i '&&' * exp
-			+ swap_aba(i '_' * index, d '..=' * i '=') * i '..' * exp
+			swap_aba(i '_' * index, d '+=' * i '=') * i '+' * (exp2 + i '(' * exp * i ')')
+			+ swap_aba(i '_' * index, d '-=' * i '=') * i '-' * (exp2 + i '(' * exp * i ')')
+			+ swap_aba(i '_' * index, d '*=' * i '=') * i '*' * (exp2 + i '(' * exp * i ')')
+			+ swap_aba(i '_' * index, d '/=' * i '=') * i '/' * (exp2 + i '(' * exp * i ')')
+			+ swap_aba(i '_' * index, d '%=' * i '=') * i '%' * (exp2 + i '(' * exp * i ')')
+			+ swap_aba(i '_' * index, d '^=' * i '=') * i '^' * (exp2 + i '(' * exp * i ')')
+			+ swap_aba(i '_' * index, d '||=' * i '=') * i 'or' * (exp2 + i '(' * exp * i ')')
+			+ swap_aba(i '_' * index, d '&&=' * i '=') * i 'and' * (exp2 + i '(' * exp * i ')')
+			+ swap_aba(i '_' * index, d '..=' * i '=') * i '..' * (exp2 + i '(' * exp * i ')')
 			+ swap_aba(i '_' * index, d '++' * i '=') * i '+' * i '1'
 			+ swap_aba(i '_' * index, d '--' * i '=') * i '-' * i '1'
 		)
 		+ functioncall
 	,
 	laststat
-		= t 'return' * explist * t ';'
+		= t 'return' * maybe(explist) * t ';'
 		+ t 'break' * ';'
 	,
 	preindex = prefix * preindex2 + Name,

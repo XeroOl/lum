@@ -78,6 +78,7 @@ local function main()
 	local input_code = read(input)
 	
 	local output_code, err = lum.to_lua(input_code)
+	
 	if not output_code then
 		print(err)
 		os.exit()
