@@ -281,7 +281,7 @@ local function make_err_message(str, pos)
 	return 'Syntax error on line ' .. row ..' at col ' .. col
 end
 
-function lum.to_lua(str, check)
+function lum.to_lua(str)
 	local processed, _, errpos = compiler:match(str)
 	if not processed then
 		return nil, make_err_message(str, errpos)
@@ -308,6 +308,15 @@ function lum.loadfile(path, ...)
 	end
 	local block = assert(file:read("*a"))
 	return lum.loadstring(block, ...)
+end
+
+function lum.file_to_lua(str)
+	local file, err = io.open(path)
+	if err then
+		return nil, err
+	end
+	local block = assert(file:read("*a"))
+	return lum.to_lua(block)
 end
 
 function lum.dostring(str, ...)
