@@ -245,7 +245,7 @@ local compiler = Ct {
 		d '->'
 	* (
 		d '{' * block * d '}' 
-		+ d '(' * i 'return' * maybe(explist) * d ')' * i ';'
+		+ d '(' * i 'return' * (maybe(explist) - t '{') * d ')' * i ';'
 		+ i 'return' * exp * i ';'
 	) * i 'end',
 	funcbody = t '(' * maybe(parlist) * t ')' * d '{' * block * d '}' * i 'end',
