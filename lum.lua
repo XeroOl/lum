@@ -154,10 +154,14 @@ local preindex2 = V "preindex2"
 
 local compiler = Ct {
 	file,
-	file = chunk * maybe(Space) * eof,
-	chunk = stat ^ 0 * laststat ^ -1,
-	bracedblock = d '{' * i 'do' * block * d '}' * i 'end',
-	block = chunk,
+	file
+		= chunk * maybe(Space) * eof,
+	chunk
+		= stat ^ 0 * laststat ^ -1,
+	bracedblock
+		= d '{' * i 'do' * block * d '}' * i 'end',
+	block
+		= chunk,
 	stat 
 		= bracedblock
 		+ t 'while' * d '(' * exp * d ')' * bracedblock
@@ -213,15 +217,28 @@ local compiler = Ct {
 		= t 'return' * maybe(explist) * t ';'
 		+ t 'break' * ';'
 	,
-	preindex = prefix * preindex2 + Name,
-	preindex2 = (call + index) * (#((index * ("" - index - call)) / 0) + preindex2),
-	funcname = Name * maybe_some(t '.' * Name) * maybe(t ':' * Name),
-	varlist = var * maybe_some(t ',' * var),
-	var = prefix * var2 + Name + '_',
-	var2 = index * maybe(var2) + call * var2,
-	namelist = Name * maybe_some(t ',' * Name),
-	explist = exp * maybe_some(t ',' * exp),
-	exp = exp2 * maybe_some(binop * exp2),
+	preindex
+		= prefix * preindex2
+		+ Name,
+	preindex2
+		= (call + index) * (#((index * ("" - index - call)) / 0) + preindex2),
+	funcname
+		= Name * maybe_some(t '.' * Name) * maybe(t ':' * Name),
+	varlist
+		= var * maybe_some(t ',' * var),
+	var
+		= prefix * var2
+		+ Name
+		+ '_',
+	var2 
+		= index * maybe(var2)
+		+ call * var2,
+	namelist
+		= Name * maybe_some(t ',' * Name),
+	explist
+		= exp * maybe_some(t ',' * exp),
+	exp
+		= exp2 * maybe_some(binop * exp2),
 	exp2
 		= Number
 		+ String
@@ -233,32 +250,65 @@ local compiler = Ct {
 		+ t 'false'
 		+ t 'true'
 		+ unop * exp2,
-	prefixexp = prefix * maybe(prefixexp2),
-	prefixexp2 = (call + index) * maybe(prefixexp2),
-	functioncall = prefix * functioncall2,
-	functioncall2 = call * maybe(functioncall2) + index * functioncall2,
-	args = t '(' * maybe(explist) * t')' + tableconstructor + String,
-	_function = i 'function' * (
-			t '(' * maybe(parlist) * t ')'
+	prefixexp
+		= prefix * maybe(prefixexp2),
+	prefixexp2
+		= (call + index) * maybe(prefixexp2),
+	functioncall
+		= prefix * functioncall2,
+	functioncall2
+		= call * maybe(functioncall2)
+		+ index * functioncall2,
+	args
+		= t '(' * maybe(explist) * t')'
+		+ tableconstructor
+		+ String,
+	_function
+		= i 'function' * (
+			  t '(' * maybe(parlist) * t ')'
 			+ i '(' * maybe(Name + t '...') * i ')'
-	) *
-		d '->'
-	* (
-		d '{' * block * d '}' 
-		+ d '(' * i 'return' * (maybe(explist) - t '{') * d ')' * i ';'
-		+ i 'return' * exp * i ';'
-	) * i 'end',
-	funcbody = t '(' * maybe(parlist) * t ')' * d '{' * block * d '}' * i 'end',
-	parlist = namelist * maybe (t ',' * t '...') + t '...',
-	tableconstructor = t '{' * maybe(fieldlist) * t '}',
-	fieldlist = field * maybe(fieldsep * maybe(fieldlist)),
-	field = t '[' * exp * t ']' * t '=' * exp + Name * t '=' * exp + d 'fn' * Name * i '=' * i 'function' * funcbody + exp,
-	fieldsep = t ';' + t ',',
-	binop = t(P'^' + P'<=' + '>=' + '==' + '..' + S'+-*/%<>^') + d '&&' * i 'and' + d '!=' * i '~=' + d '||' * i 'or',
-	unop = t '-' + d '!' * i 'not' + t '#',
-	call = args + t ':' * Name * args,
-	index = t '[' * exp * t ']'  + d '.' * (i '.' * Name + i '[' * t(R'09'^1) * i ']'),
-	prefix = t '(' * exp * t ')' + Name,
+		) * d '->' * (
+			  d '{' * block * d '}' 
+			+ d '(' * i 'return' * (maybe(explist) - t '{') * d ')' * i ';'
+			+ i 'return' * exp * i ';'
+		) * i 'end',
+	funcbody
+		= t '(' * maybe(parlist) * t ')' * d '{' * block * d '}' * i 'end',
+	parlist
+		= namelist * maybe (t ',' * t '...' * maybe(d ','))
+		+ t '...' * maybe(d ','),
+	tableconstructor
+		= t '{' * maybe(fieldlist) * t '}',
+	fieldlist
+		= field * maybe(fieldsep * maybe(fieldlist)),
+	field
+		= t '[' * exp * t ']' * t '=' * exp + Name * t '=' * exp
+		+ d 'fn' * Name * i '=' * i 'function' * funcbody
+		+ exp,
+	fieldsep
+		= t ';'
+		+ t ',',
+	binop
+		= t(P'^' + '<=' + '>=' + '==' + '..' + S'+-*/%<>')
+		+ d '&&' * i 'and'
+		+ d '!=' * i '~='
+		+ d '||' * i 'or',
+	unop
+		= t '-'
+		+ d '!' * i 'not'
+		+ t '#',
+	call
+		= args
+		+ t ':' * Name * args,
+	index
+		= t '[' * exp * t ']'
+		+ d '.' * (
+			  i '.' * Name
+			+ i '[' * t(R'09'^1) * i ']'
+		),
+	prefix
+		= t '(' * exp * t ')'
+		+ Name,
 } / function(tab)
 	return table.concat(tab, ' ')
 		:gsub(" \n", "\n")
