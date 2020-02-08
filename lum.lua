@@ -214,7 +214,7 @@ local compiler = Ct {
 		+ t 'break' * ';'
 	,
 	preindex = prefix * preindex2 + Name,
-	preindex2 = (call + index) * (#((index * ("" - index - call))/ 0) + preindex2),
+	preindex2 = (call + index) * (#((index * ("" - index - call)) / 0) + preindex2),
 	funcname = Name * maybe_some(t '.' * Name) * maybe(t ':' * Name),
 	varlist = var * maybe_some(t ',' * var),
 	var = prefix * var2 + Name + '_',
@@ -223,8 +223,7 @@ local compiler = Ct {
 	explist = exp * maybe_some(t ',' * exp),
 	exp = exp2 * maybe_some(binop * exp2),
 	exp2
-		= functioncall
-		+ Number
+		= Number
 		+ String
 		+ _function
 		+ t '...'
@@ -241,7 +240,7 @@ local compiler = Ct {
 	args = t '(' * maybe(explist) * t')' + tableconstructor + String,
 	_function = i 'function' * (
 			t '(' * maybe(parlist) * t ')'
-			+ i '(' * (Name + t '...') * i ')'
+			+ i '(' * maybe(Name + t '...') * i ')'
 	) *
 		d '->'
 	* (
@@ -310,7 +309,7 @@ function lum.loadfile(path, ...)
 	return lum.loadstring(block, ...)
 end
 
-function lum.file_to_lua(str)
+function lum.file_to_lua(path)
 	local file, err = io.open(path)
 	if err then
 		return nil, err
@@ -362,7 +361,6 @@ end
 
 function lum.lum_loader(name)
 	name_path = name:gsub("%.", dirsep)
-	print(name)
 	if package.lumpath then
 		for path in package.lumpath:gmatch("[^;]+") do
 			local path = path:gsub("?", name_path)
