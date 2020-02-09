@@ -131,8 +131,9 @@ print(curry(1)(2)(3)); // 6
 
 
 
-// you can create literal tables
-let foo = x -> {"foo", "bar", x};
+// "-> {" will expect a code block
+// so you can't drop parentheses if you want to generate a literal table
+let foo = x -> ({"foo", "bar", x});
 
 // if ambiguous, use () to force it to be interpreted as an expression
 let empty_table_maker = () -> ({});

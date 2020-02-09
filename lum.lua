@@ -186,28 +186,12 @@ local compiler = Ct {
 		= d 'let' * i 'local' * namelist * maybe(t '=' * explist)
 		+ varlist * t '=' * explist
 		-- TODO simplify
-		+ swap_aba(Name * maybe(index), d '+=' * i '=') * i '+' * (exp2 * -binop + i '(' * exp * i ')')
-		+ swap_aba(Name * maybe(index), d '-=' * i '=') * i '-' * (exp2 * -binop + i '(' * exp * i ')')
-		+ swap_aba(Name * maybe(index), d '*=' * i '=') * i '*' * (exp2 * -binop + i '(' * exp * i ')')
-		+ swap_aba(Name * maybe(index), d '/=' * i '=') * i '/' * (exp2 * -binop + i '(' * exp * i ')')
-		+ swap_aba(Name * maybe(index), d '%=' * i '=') * i '%' * (exp2 * -binop + i '(' * exp * i ')')
-		+ swap_aba(Name * maybe(index), d '^=' * i '=') * i '^' * (exp2 * -binop + i '(' * exp * i ')')
-		+ swap_aba(Name * maybe(index), d '||=' * i '=') * i 'or' * (exp2 * -binop + i '(' * exp * i ')')
-		+ swap_aba(Name * maybe(index), d '&&=' * i '=') * i 'and' * (exp2 * -binop + i '(' * exp * i ')')
-		+ swap_aba(Name * maybe(index), d '..=' * i '=') * i '..' * (exp2 * -binop + i '(' * exp * i ')')
+		+ swap_aba(Name * maybe(index), i '=') * binop * '=' * (exp2 * -binop + i '(' * exp * i ')')
 		+ swap_aba(Name * maybe(index), d '++' * i '=') * i '+' * i '1'
 		+ swap_aba(Name * maybe(index), d '--' * i '=') * i '-' * i '1'
 		+ i 'local' * i '_' * i '=' * preindex * i ';' * (
 			-- TODO simplify
-			swap_aba(i '_' * index, d '+=' * i '=') * i '+' * (exp2 * -binop + i '(' * exp * i ')')
-			+ swap_aba(i '_' * index, d '-=' * i '=') * i '-' * (exp2 * -binop + i '(' * exp * i ')')
-			+ swap_aba(i '_' * index, d '*=' * i '=') * i '*' * (exp2 * -binop + i '(' * exp * i ')')
-			+ swap_aba(i '_' * index, d '/=' * i '=') * i '/' * (exp2 * -binop + i '(' * exp * i ')')
-			+ swap_aba(i '_' * index, d '%=' * i '=') * i '%' * (exp2 * -binop + i '(' * exp * i ')')
-			+ swap_aba(i '_' * index, d '^=' * i '=') * i '^' * (exp2 * -binop + i '(' * exp * i ')')
-			+ swap_aba(i '_' * index, d '||=' * i '=') * i 'or' * (exp2 * -binop + i '(' * exp * i ')')
-			+ swap_aba(i '_' * index, d '&&=' * i '=') * i 'and' * (exp2 * -binop + i '(' * exp * i ')')
-			+ swap_aba(i '_' * index, d '..=' * i '=') * i '..' * (exp2 * -binop + i '(' * exp * i ')')
+			swap_aba(i '_' * index, i '=') * binop * '=' * (exp2 * -binop + i '(' * exp * i ')')
 			+ swap_aba(i '_' * index, d '++' * i '=') * i '+' * i '1'
 			+ swap_aba(i '_' * index, d '--' * i '=') * i '-' * i '1'
 		)
@@ -215,8 +199,7 @@ local compiler = Ct {
 	,
 	laststat
 		= t 'return' * maybe(explist) * t ';'
-		+ t 'break' * ';'
-	,
+		+ t 'break' * t ';',
 	preindex
 		= prefix * preindex2
 		+ Name,
@@ -269,8 +252,8 @@ local compiler = Ct {
 			+ i '(' * maybe(Name + t '...') * i ')'
 		) * d '->' * (
 			  d '{' * block * d '}' 
-			+ d '(' * i 'return' * (maybe(explist) - t '{') * d ')' * i ';'
-			+ i 'return' * exp * i ';'
+			+ d '(' * i 'return' * maybe(explist) * d ')' * i ';'
+			+ i 'return' * -t '{' * exp * i ';'
 		) * i 'end',
 	funcbody
 		= t '(' * maybe(parlist) * t ')' * d '{' * block * d '}' * i 'end',
